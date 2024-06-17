@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -59,6 +60,23 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    // Coil
+    implementation(libs.coil.svg)
+    implementation(libs.coil.compose)
+    // Decompose
+    implementation(libs.decompose)
+    implementation(libs.decompose.extension)
+    implementation(libs.kotlinx.serialization.json)
+    // MVIKotlin
+    implementation(libs.mvikotlin)
+    implementation(libs.mvikotlin.main)
+    implementation(libs.mvikotlin.logging)
+    implementation(libs.mvikotlin.timetravel)
+    implementation(libs.mvikotlin.extensions.reaktive)
+    // Badoo Reaktive
+    implementation(libs.badoo.reaktive)
+    implementation(libs.badoo.reaktive.coroutines.interop)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
