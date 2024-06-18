@@ -25,6 +25,8 @@ internal class SecondScreenStoreProvider(
 
     private sealed class Msg {
         data class ImagesLoaded(val images: List<String>) : Msg()
+        data object ShowLoading : Msg()
+        data object HideLoading : Msg()
     }
 
     private inner class ExecutorImpl : ReaktiveExecutor<Intent, Unit, State, Msg, Nothing>() {
@@ -39,8 +41,10 @@ internal class SecondScreenStoreProvider(
         }
 
         private fun loadImagesFromDisk() {
+            dispatch(Msg.ShowLoading)
             val images = imageRepository.loadImagesFromDisk()
             dispatch(Msg.ImagesLoaded(images))
+            dispatch(Msg.HideLoading)
         }
     }
 
@@ -48,6 +52,8 @@ internal class SecondScreenStoreProvider(
         override fun State.reduce(msg: Msg): State =
             when (msg) {
                 is Msg.ImagesLoaded -> copy(images = msg.images)
+                is Msg.ShowLoading -> copy(isLoading = true)
+                is Msg.HideLoading -> copy(isLoading = false)
             }
     }
 }

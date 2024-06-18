@@ -10,7 +10,8 @@ interface SecondScreen {
     fun onClickBack()
 
     data class Model(
-        val images: List<String>
+        val images: List<String>,
+        val isLoading: Boolean,
     )
 
     sealed class Output {

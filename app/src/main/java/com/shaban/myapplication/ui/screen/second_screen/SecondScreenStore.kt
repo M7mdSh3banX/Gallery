@@ -11,7 +11,8 @@ internal interface SecondScreenStore : Store<Intent, State, Nothing> {
     }
 
     data class State(
-        val images: List<String> = emptyList()
+        val images: List<String> = emptyList(),
+        val isLoading: Boolean = false,
     )
 
     // There isn't usage of label, so pass Nothing

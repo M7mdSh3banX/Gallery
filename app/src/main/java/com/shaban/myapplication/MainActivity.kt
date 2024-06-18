@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
         return RootComponent(
             componentContext = componentContext,
             storeFactory = LoggingStoreFactory(TimeTravelStoreFactory()),
-            imageRepository = ImageRepositoryImpl(context = this)
+            imageRepository = ImageRepositoryImpl()
         )
     }
 }

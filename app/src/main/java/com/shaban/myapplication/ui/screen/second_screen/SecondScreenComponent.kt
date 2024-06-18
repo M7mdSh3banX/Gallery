@@ -34,6 +34,7 @@ class SecondScreenComponent(
     private fun toModel(state: SecondScreenStore.State): SecondScreen.Model {
         return SecondScreen.Model(
             images = state.images,
+            isLoading = state.isLoading
         )
     }
 }
