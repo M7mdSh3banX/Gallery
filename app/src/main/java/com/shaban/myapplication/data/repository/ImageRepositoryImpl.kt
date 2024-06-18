@@ -42,10 +42,10 @@ class ImageRepositoryImpl : ImageRepository {
     }
 
     override suspend fun loadImagesFromDisk(): List<String> {
-        deleteRecursive(imagesLocation)
-
-        withContext(Dispatchers.IO) {
-            downloadImagesToDisk()
+        if (!imagesLocation.exists() || imagesLocation.listFiles().isNullOrEmpty()) {
+            withContext(Dispatchers.IO) {
+                downloadImagesToDisk()
+            }
         }
 
         val imageFiles = imagesLocation.listFiles()?.toList() ?: emptyList()
@@ -107,17 +107,5 @@ class ImageRepositoryImpl : ImageRepository {
         out.flush()
         out.close()
         Log.e("SHABAN_REPO", "File Saved In DCIM/MyImages/$imageName")
-    }
-
-    private fun deleteRecursive(fileOrDirectory: File) {
-        if (fileOrDirectory.isDirectory) {
-            val children = fileOrDirectory.listFiles()
-            if (children != null) {
-                for (child in children) {
-                    deleteRecursive(child)
-                }
-            }
-        }
-        fileOrDirectory.delete()
     }
 }

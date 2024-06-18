@@ -10,9 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import coil.compose.SubcomposeAsyncImage
 import coil.decode.SvgDecoder
-import coil.request.CachePolicy
 import coil.request.ImageRequest
-import kotlinx.coroutines.Dispatchers
 
 /**
  * A composable function that loads and displays an image from a network URL with support for SVG format.
@@ -34,12 +32,7 @@ fun NetworkImage(
     val imageRequest = ImageRequest.Builder(LocalContext.current)
         .data(imageUrl)
         .decoderFactory(SvgDecoder.Factory()) // To support svg format
-        .dispatcher(Dispatchers.IO)
-        .memoryCacheKey(imageUrl)
-        .diskCacheKey(imageUrl)
         .fallback(placeholder)
-        .diskCachePolicy(CachePolicy.ENABLED)
-        .memoryCachePolicy(CachePolicy.ENABLED)
         .crossfade(true)
         .build()
 
