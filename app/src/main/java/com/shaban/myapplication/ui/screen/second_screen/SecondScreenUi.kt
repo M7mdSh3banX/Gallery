@@ -1,5 +1,8 @@
 package com.shaban.myapplication.ui.screen.second_screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,12 +31,23 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 fun SecondScreen(component: SecondScreen) {
     val model by component.models.subscribeAsState()
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        if (model.isLoading) {
+    AnimatedVisibility(
+        visible = model.isLoading,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center)
             )
-        } else {
+        }
+    }
+    Box(modifier = Modifier.fillMaxSize()) {
+        AnimatedVisibility(
+            visible = model.images.isNotEmpty(),
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()

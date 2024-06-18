@@ -5,7 +5,10 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.arkivanov.mvikotlin.extensions.reaktive.states
+import com.badoo.reaktive.observable.subscribe
 import com.shaban.myapplication.data.repository.ImageRepository
+
 
 class SecondScreenComponent(
     componentContext: ComponentContext,
@@ -22,6 +25,12 @@ class SecondScreenComponent(
 
     private val _models = MutableValue(toModel(store.state))
     override val models: Value<SecondScreen.Model> = _models
+
+    init {
+        store.states.subscribe { state ->
+            _models.value = toModel(state)
+        }
+    }
 
     override fun onClickNext() {
         output(SecondScreen.Output.Next)

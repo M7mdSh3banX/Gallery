@@ -8,6 +8,10 @@ import com.arkivanov.mvikotlin.extensions.reaktive.ReaktiveExecutor
 import com.shaban.myapplication.data.repository.ImageRepository
 import com.shaban.myapplication.ui.screen.second_screen.SecondScreenStore.Intent
 import com.shaban.myapplication.ui.screen.second_screen.SecondScreenStore.State
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class SecondScreenStoreProvider(
     private val storeFactory: StoreFactory,
@@ -30,6 +34,7 @@ internal class SecondScreenStoreProvider(
     }
 
     private inner class ExecutorImpl : ReaktiveExecutor<Intent, Unit, State, Msg, Nothing>() {
+        private val coroutineScope = CoroutineScope(Dispatchers.Main)
         override fun executeAction(action: Unit) {
             loadImagesFromDisk()
         }
@@ -42,9 +47,13 @@ internal class SecondScreenStoreProvider(
 
         private fun loadImagesFromDisk() {
             dispatch(Msg.ShowLoading)
-            val images = imageRepository.loadImagesFromDisk()
-            dispatch(Msg.ImagesLoaded(images))
-            dispatch(Msg.HideLoading)
+            coroutineScope.launch {
+                val images = withContext(Dispatchers.IO) {
+                    imageRepository.loadImagesFromDisk()
+                }
+                dispatch(Msg.ImagesLoaded(images))
+                dispatch(Msg.HideLoading)
+            }
         }
     }
 

@@ -5,11 +5,13 @@ import android.graphics.BitmapFactory
 import android.os.Environment
 import android.util.Log
 import com.shaban.myapplication.R
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
@@ -39,10 +41,10 @@ class ImageRepositoryImpl : ImageRepository {
         return imageUrls
     }
 
-    override fun loadImagesFromDisk(): List<String> {
+    override suspend fun loadImagesFromDisk(): List<String> {
         deleteRecursive(imagesLocation)
 
-        runBlocking {
+        withContext(Dispatchers.IO) {
             downloadImagesToDisk()
         }
 
