@@ -1,17 +1,15 @@
 package com.shaban.myapplication.ui.screen.third_screen
 
 import com.arkivanov.mvikotlin.core.store.Store
-import com.shaban.myapplication.ui.screen.third_screen.ThirdScreenStore.Intent
 import com.shaban.myapplication.ui.screen.third_screen.ThirdScreenStore.State
 
-internal interface ThirdScreenStore : Store<Intent, State, Nothing> {
+internal interface ThirdScreenStore : Store<Nothing, State, Nothing> {
 
-    sealed class Intent {
-        data object LoadImagesFromResources : Intent()
-    }
+    // There isn't usage of Intent, so pass Nothing
 
     data class State(
-        val images: List<Int> = emptyList()
+        val images: List<Int> = emptyList(),
+        val isLoading: Boolean = false,
     )
 
     // There isn't usage of label, so pass Nothing

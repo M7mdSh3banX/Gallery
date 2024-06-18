@@ -1,5 +1,8 @@
 package com.shaban.myapplication.ui.screen.first_screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,29 +24,37 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.shaban.myapplication.R
+import com.shaban.myapplication.ui.component.Loading
 import com.shaban.myapplication.ui.component.NetworkImage
 
 @Composable
-fun FirstScreen(component: FirstScreen) {
+fun FirstScreenUi(component: FirstScreen) {
     val model by component.models.subscribeAsState()
 
+    Loading(isLoading = model.isLoading)
     Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        AnimatedVisibility(
+            visible = model.images.isNotEmpty(),
+            enter = fadeIn(),
+            exit = fadeOut()
         ) {
-            items(model.images) { imageUrl ->
-                NetworkImage(
-                    imageUrl = imageUrl,
-                    placeholder = R.drawable.img_placeholder,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(shape = MaterialTheme.shapes.medium)
-                        .background(color = Color.White),
-                )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(model.images) { imageUrl ->
+                    NetworkImage(
+                        imageUrl = imageUrl,
+                        placeholder = R.drawable.img_placeholder,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .clip(shape = MaterialTheme.shapes.medium)
+                            .background(color = Color.White),
+                    )
+                }
             }
         }
         Button(

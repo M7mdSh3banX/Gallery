@@ -14,8 +14,8 @@ interface SecondScreen {
         val isLoading: Boolean,
     )
 
-    sealed class Output {
-        data object Next : Output()
-        data object Back : Output()
+    sealed class Event {
+        data object Next : Event()
+        data object Back : Event()
     }
 }

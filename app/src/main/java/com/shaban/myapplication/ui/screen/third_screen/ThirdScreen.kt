@@ -8,10 +8,11 @@ interface ThirdScreen {
     fun onClickBack()
 
     data class Model(
-        val images: List<Int>
+        val images: List<Int>,
+        val isLoading: Boolean,
     )
 
-    sealed class Output {
-        data object Back : Output()
+    sealed class Event {
+        data object Back : Event()
     }
 }

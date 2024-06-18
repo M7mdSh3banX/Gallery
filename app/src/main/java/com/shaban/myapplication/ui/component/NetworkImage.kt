@@ -17,9 +17,9 @@ import coil.request.ImageRequest
  *
  * @param imageUrl the URL of the image to be loaded from the network.
  * @param placeholder resource ID of the placeholder image to be displayed if the main image cannot be loaded.
- * @param modifier the Modifier to be applied to this layout node
+ * @param modifier Modifier for styling and layout customization.
  * @param contentDescription a description of the image for accessibility purposes. Defaults to an empty string.
- * @param contentScale defines how the image should be scaled inside the view bounds. Defaults to ContentScale.Crop.
+ * @param contentScale defines how the image should be scaled inside the view. Defaults to ContentScale.Crop.
  */
 @Composable
 fun NetworkImage(
@@ -32,7 +32,7 @@ fun NetworkImage(
     val imageRequest = ImageRequest.Builder(LocalContext.current)
         .data(imageUrl)
         .decoderFactory(SvgDecoder.Factory()) // To support svg format
-        .fallback(placeholder)
+        .fallback(placeholder)  // Set the fallback drawable to use if data is null.
         .crossfade(true)
         .build()
 

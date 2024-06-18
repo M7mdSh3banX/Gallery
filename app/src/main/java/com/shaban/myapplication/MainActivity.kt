@@ -17,9 +17,9 @@ import com.arkivanov.mvikotlin.timetravel.store.TimeTravelStoreFactory
 import com.shaban.myapplication.data.repository.ImageRepositoryImpl
 import com.shaban.myapplication.ui.navigation.Root
 import com.shaban.myapplication.ui.navigation.RootComponent
-import com.shaban.myapplication.ui.screen.first_screen.FirstScreen
-import com.shaban.myapplication.ui.screen.second_screen.SecondScreen
-import com.shaban.myapplication.ui.screen.third_screen.ThirdScreen
+import com.shaban.myapplication.ui.screen.first_screen.FirstScreenUi
+import com.shaban.myapplication.ui.screen.second_screen.SecondScreenUi
+import com.shaban.myapplication.ui.screen.third_screen.ThirdScreenUi
 import com.shaban.myapplication.ui.theme.NewChallengeTheme
 
 class MainActivity : ComponentActivity() {
@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
     private fun createRoot(componentContext: ComponentContext): Root {
         return RootComponent(
             componentContext = componentContext,
-            storeFactory = LoggingStoreFactory(TimeTravelStoreFactory()),
+            storeFactory = LoggingStoreFactory(TimeTravelStoreFactory()),   // Configure store factories for logging and time travel
             imageRepository = ImageRepositoryImpl()
         )
     }
@@ -51,12 +51,13 @@ class MainActivity : ComponentActivity() {
 private fun RootContent(component: Root) {
     Children(
         stack = component.childStack,
-        animation = stackAnimation(slide()),
+        animation = stackAnimation(slide()),    // Stack animation between screens.
     ) {
+        // Display content based on the current instance of Root.Child.
         when (val child = it.instance) {
-            is Root.Child.FirstScreenChild -> FirstScreen(component = child.component)
-            is Root.Child.SecondScreenChild -> SecondScreen(component = child.component)
-            is Root.Child.ThirdScreenChild -> ThirdScreen(component = child.component)
+            is Root.Child.FirstScreenChild -> FirstScreenUi(component = child.component)
+            is Root.Child.SecondScreenChild -> SecondScreenUi(component = child.component)
+            is Root.Child.ThirdScreenChild -> ThirdScreenUi(component = child.component)
         }
     }
 }

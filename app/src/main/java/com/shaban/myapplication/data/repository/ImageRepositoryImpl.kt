@@ -5,12 +5,10 @@ import android.graphics.BitmapFactory
 import android.os.Environment
 import android.util.Log
 import com.shaban.myapplication.R
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -19,6 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class ImageRepositoryImpl : ImageRepository {
+    // DCIM directory where downloaded images are stored with new directory called MyImages.
     private val imagesLocation = File(
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
         "MyImages"
@@ -37,17 +36,18 @@ class ImageRepositoryImpl : ImageRepository {
         "https://www.svgrepo.com/show/530627/sunbathing.svg",
     )
 
-    override fun loadImagesFromInternet(): List<String> {
+    override suspend fun loadImagesFromInternet(): List<String> {
         return imageUrls
     }
 
     override suspend fun loadImagesFromDisk(): List<String> {
+        // If images directory doesn't exist or is empty, download images to disk.
         if (!imagesLocation.exists() || imagesLocation.listFiles().isNullOrEmpty()) {
             withContext(Dispatchers.IO) {
                 downloadImagesToDisk()
             }
         }
-
+        // Return list of image files in the images directory and return their paths from the disk.
         val imageFiles = imagesLocation.listFiles()?.toList() ?: emptyList()
         return imageFiles.map { it.absolutePath }
     }
@@ -69,15 +69,17 @@ class ImageRepositoryImpl : ImageRepository {
     }
 
     private suspend fun downloadImagesToDisk() = coroutineScope {
+        // Create images directory if it doesn't exist.
         if (!imagesLocation.exists()) {
             imagesLocation.mkdirs()
         }
-
+        // Date format for generating unique image file names.
         val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.getDefault())
 
         val jobs = imageUrls.map { urlString ->
             async(Dispatchers.IO) {
                 try {
+                    // Open connection to the image URL and download image bitmap.
                     val url = URL(urlString)
                     val connection = url.openConnection()
                     connection.connectTimeout = 3000
@@ -85,6 +87,7 @@ class ImageRepositoryImpl : ImageRepository {
                     val inputStream = connection.getInputStream()
 
                     val bitmap = BitmapFactory.decodeStream(inputStream)
+                    // Save downloaded bitmap to a file on disk.
                     saveBitmapToFile(bitmap, imagesLocation, dateFormat)
 
                     inputStream.close()
@@ -94,16 +97,25 @@ class ImageRepositoryImpl : ImageRepository {
                 }
             }
         }
-
+        // Using await for completion of all image download jobs.
         jobs.awaitAll()
     }
 
-    private fun saveBitmapToFile(bitmap: Bitmap, dcimDir: File, dateFormat: SimpleDateFormat) {
+    /**
+     * Saves a bitmap image to a file on disk.
+     *
+     * @param bitmap Bitmap image to save.
+     * @param dir Directory where image file will be saved.
+     * @param dateFormat SimpleDateFormat for generating unique file names.
+     */
+    private fun saveBitmapToFile(bitmap: Bitmap, dir: File, dateFormat: SimpleDateFormat) {
         val currentTime = System.currentTimeMillis()
-        val imageName = "${dateFormat.format(currentTime)}_image.png"
-        val file = File(dcimDir, imageName)
+        val imageName = "${dateFormat.format(currentTime)}_image.jpeg"
+        val file = File(dir, imageName)
+
+        // Write bitmap to file output stream as JPEG format.
         val out = FileOutputStream(file)
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
         out.flush()
         out.close()
         Log.e("SHABAN_REPO", "File Saved In DCIM/MyImages/$imageName")

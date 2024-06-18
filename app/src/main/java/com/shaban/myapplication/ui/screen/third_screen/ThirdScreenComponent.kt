@@ -5,18 +5,17 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.badoo.reaktive.base.Consumer
 import com.shaban.myapplication.data.repository.ImageRepository
-import com.shaban.myapplication.ui.screen.second_screen.SecondScreen
-import com.shaban.myapplication.ui.screen.second_screen.SecondScreenStore
 
 class ThirdScreenComponent(
     componentContext: ComponentContext,
     imageRepository: ImageRepository,
     storeFactory: StoreFactory,
-    private val output: (ThirdScreen.Output) -> Unit
+    private val event: Consumer<ThirdScreen.Event>
 ) : ThirdScreen, ComponentContext by componentContext {
     private val store = instanceKeeper.getStore {
-        ThirdScreenStoreProvider(
+        ThirdScreenStoreFactory(
             storeFactory = storeFactory,
             imageRepository = imageRepository
         ).provide()
@@ -26,12 +25,13 @@ class ThirdScreenComponent(
     override val models: Value<ThirdScreen.Model> = _models
 
     override fun onClickBack() {
-        output(ThirdScreen.Output.Back)
+        event.onNext(ThirdScreen.Event.Back)
     }
 
     private fun toModel(state: ThirdScreenStore.State): ThirdScreen.Model {
         return ThirdScreen.Model(
             images = state.images,
+            isLoading = state.isLoading
         )
     }
 }

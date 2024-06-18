@@ -6,6 +6,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.reaktive.states
+import com.badoo.reaktive.base.Consumer
 import com.badoo.reaktive.observable.subscribe
 import com.shaban.myapplication.data.repository.ImageRepository
 
@@ -14,10 +15,10 @@ class SecondScreenComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     imageRepository: ImageRepository,
-    private val output: (SecondScreen.Output) -> Unit
+    private val event: Consumer<SecondScreen.Event>
 ) : SecondScreen, ComponentContext by componentContext {
     private val store = instanceKeeper.getStore {
-        SecondScreenStoreProvider(
+        SecondScreenStoreFactory(
             storeFactory = storeFactory,
             imageRepository = imageRepository
         ).provide()
@@ -33,11 +34,11 @@ class SecondScreenComponent(
     }
 
     override fun onClickNext() {
-        output(SecondScreen.Output.Next)
+        event.onNext(SecondScreen.Event.Next)
     }
 
     override fun onClickBack() {
-        output(SecondScreen.Output.Back)
+        event.onNext(SecondScreen.Event.Back)
     }
 
     private fun toModel(state: SecondScreenStore.State): SecondScreen.Model {

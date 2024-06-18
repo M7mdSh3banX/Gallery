@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,22 +25,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.shaban.myapplication.ui.component.Loading
 
 @Composable
-fun SecondScreen(component: SecondScreen) {
+fun SecondScreenUi(component: SecondScreen) {
     val model by component.models.subscribeAsState()
 
-    AnimatedVisibility(
-        visible = model.isLoading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-    }
+    Loading(isLoading = model.isLoading)
     Box(modifier = Modifier.fillMaxSize()) {
         AnimatedVisibility(
             visible = model.images.isNotEmpty(),
@@ -68,7 +58,6 @@ fun SecondScreen(component: SecondScreen) {
                 }
             }
         }
-
         Button(
             modifier = Modifier
                 .align(Alignment.BottomStart)

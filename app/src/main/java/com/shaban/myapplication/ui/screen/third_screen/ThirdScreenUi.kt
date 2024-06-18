@@ -1,5 +1,8 @@
 package com.shaban.myapplication.ui.screen.third_screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,29 +25,37 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.shaban.myapplication.ui.component.Loading
 
 @Composable
-fun ThirdScreen(component: ThirdScreen) {
+fun ThirdScreenUi(component: ThirdScreen) {
     val model by component.models.subscribeAsState()
 
+    Loading(isLoading = model.isLoading)
     Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        AnimatedVisibility(
+            visible = model.images.isNotEmpty(),
+            enter = fadeIn(),
+            exit = fadeOut()
         ) {
-            items(model.images) { image ->
-                AsyncImage(
-                    model = image,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(shape = MaterialTheme.shapes.medium)
-                        .background(color = Color.White),
-                    contentScale = ContentScale.Crop
-                )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(model.images) { image ->
+                    AsyncImage(
+                        model = image,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .clip(shape = MaterialTheme.shapes.medium)
+                            .background(color = Color.White),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
         }
         Button(

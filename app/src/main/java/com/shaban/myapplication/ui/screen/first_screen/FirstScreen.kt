@@ -8,10 +8,11 @@ interface FirstScreen {
     fun onClickNext()
 
     data class Model(
-        val images: List<String>
+        val images: List<String>,
+        val isLoading: Boolean,
     )
 
-    sealed class Output {
-        data object Next : Output()
+    sealed class Event {
+        data object Next : Event()
     }
 }
